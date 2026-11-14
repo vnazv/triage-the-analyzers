@@ -16,14 +16,15 @@ export function parseRegistrationLink(
   query: Record<string, string | undefined>
 ): RegistrationLink | null {
   const { email, token, courseId, sectionId, role } = query
-  if (!email || !token || !role) {
+  if (!email || !token || !role || !courseId || !sectionId) {
     return null
   }
-  return {
-    email,
-    token,
-    courseId: parseInt(courseId),
-    sectionId: parseInt(sectionId),
-    role
+  const parsedCourseId = Number(courseId)
+  const parsedSectionId = Number(sectionId)
+  // A link edited by hand, or built from a null id ("sectionId=null"), must be refused here rather than
+  // shown as a form the backend will reject on submit.
+  if (!Number.isInteger(parsedCourseId) || !Number.isInteger(parsedSectionId)) {
+    return null
   }
+  return { email, token, courseId: parsedCourseId, sectionId: parsedSectionId, role }
 }
