@@ -23,6 +23,11 @@
         <exclude name="UnnecessaryConstructor"/>
         <!-- D3: narrowed, re-added below with its own properties. -->
         <exclude name="ControlStatementBraces"/>
+        <!-- D4 (triage slice 8): off. Project Pulse logs through SLF4J with {} placeholders, which defer
+             formatting until the level is enabled; the four flagged calls pass field getters
+             (getEmail(), getSectionName(), result.sent()), and two of them are LOGGER.error, which is
+             always enabled. A guard would add an if around each call and save nothing. -->
+        <exclude name="GuardLogStatement"/>
     </rule>
     <!-- D3 (triage slice 8): narrowed. All 30 findings were one-line guard clauses written on the same
          line as their condition, such as `if (source == null) return null;`. Braces stay required for
