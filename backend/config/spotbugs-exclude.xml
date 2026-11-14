@@ -7,4 +7,16 @@
 
      Unlike the baseline, this file may grow, but every entry is a reviewed decision. -->
 <FindBugsFilter>
+  <!-- D1 (triage slice 8): EI_EXPOSE_REP / EI_EXPOSE_REP2 off project-wide.
+       The 219 baselined findings fall in three kinds of class, and none is a defect here:
+       - JPA entities (Course, Section, Team, Student, ...) return and accept their associations.
+         Hibernate tracks the exact collection and entity instances it loaded; returning or storing
+         a copy would break dirty checking, lazy loading, and orphanRemoval.
+       - Spring beans (controllers, services, authorization managers) store constructor-injected
+         singletons. Copying an injected bean is meaningless.
+       - DTOs and records built per request and serialized once by Jackson; no caller keeps or
+         shares them, so an aliased List cannot be mutated behind anyone's back.
+       SpotBugs filters cannot match by annotation, so this cannot be narrowed to "entities and beans"
+       without a fragile list of class names. Revisit if a long-lived, shared value object appears. -->
+  <Match><Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/></Match>
 </FindBugsFilter>

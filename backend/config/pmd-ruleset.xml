@@ -13,5 +13,29 @@
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
     <description>PMD quickstart, with Project Pulse's decisions.</description>
     <rule ref="rulesets/java/quickstart.xml">
+        <!-- D2 (triage slice 8): off. Every empty constructor PMD flagged (30 classes, 40 findings) is the
+             no-argument constructor of a JPA entity (26 classes: the JPA spec requires one, and Hibernate
+             instantiates through it) or of a response object filled by setters (Result,
+             PeerEvaluationAverage, RatingAverage, WeeklyPeerEvaluationReport). The constructor is the
+             point, so a comment saying so in each would be ritual, and deleting the "unnecessary" one
+             would make the JPA requirement invisible. -->
+        <exclude name="UncommentedEmptyConstructor"/>
+        <exclude name="UnnecessaryConstructor"/>
+        <!-- D3: narrowed, re-added below with its own properties. -->
+        <exclude name="ControlStatementBraces"/>
+        <!-- D4 (triage slice 8): off. Project Pulse logs through SLF4J with {} placeholders, which defer
+             formatting until the level is enabled; the four flagged calls pass field getters
+             (getEmail(), getSectionName(), result.sent()), and two of them are LOGGER.error, which is
+             always enabled. A guard would add an if around each call and save nothing. -->
+        <exclude name="GuardLogStatement"/>
+    </rule>
+    <!-- D3 (triage slice 8): narrowed. All 30 findings were one-line guard clauses written on the same
+         line as their condition, such as `if (source == null) return null;`. Braces stay required for
+         if/else chains and every loop, where a mis-indented second statement is the classic bug; a lone
+         `if` without else may omit them. Cost: a multi-line braceless lone `if` would also pass. -->
+    <rule ref="category/java/codestyle.xml/ControlStatementBraces">
+        <properties>
+            <property name="checkSingleIfStmt" value="false"/>
+        </properties>
     </rule>
 </ruleset>

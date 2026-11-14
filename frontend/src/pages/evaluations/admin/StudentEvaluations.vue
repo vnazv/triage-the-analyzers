@@ -147,11 +147,11 @@ const evaluationData = computed(() => {
     (evaluation) => evaluation.averageTotalScore
   )
   return {
-    labels: weeks,
+    labels: weeks ?? [], // undefined until the averages load; Chart.js treats missing data as empty anyway
     datasets: [
       {
         label: 'Peer Evaluations',
-        data: evaluationAvgTotalScores,
+        data: evaluationAvgTotalScores ?? [],
         backgroundColor: ['#66b1ff']
       }
     ]
