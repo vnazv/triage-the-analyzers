@@ -211,10 +211,9 @@ async function loadActivities() {
   // Group activities by teamId
   const activitiesGroupedByTeamId = activities.value.reduce(
     (team, activity) => {
-      if (!team[activity.teamId!]) {
-        team[activity.teamId!] = []
-      }
-      team[activity.teamId!].push(activity)
+      // `??=` creates the group if missing and returns it, so the compiler can see it is defined
+      const group = (team[activity.teamId!] ??= [])
+      group.push(activity)
       return team
     },
     {} as Record<number, Activity[]>
